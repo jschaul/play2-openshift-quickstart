@@ -51,8 +51,8 @@ fi
 PLAY_PROCESS="[j]ava .*com.typesafe.play.*"
 #kill the app
 if [[ -n `ps aux | grep "$PLAY_PROCESS"` ]]; then
-	echo "killing process ..."
-	ps aux | grep "$PLAY_PROCESS" | awk '{print $2}'
+	echo "killing process ..." >> $LOG_FILE
+	ps aux | grep "$PLAY_PROCESS" | awk '{print $2}' >> $LOG_FILE
 	ps aux | grep "$PLAY_PROCESS" | awk '{print $2}' | xargs kill -SIGTERM
 	
 fi
@@ -63,7 +63,7 @@ if [[ -n `ps aux | grep "$PLAY_PROCESS"` ]]; then
 fi
 
 #couldn't kill it
-if [[ -z `ps aux | grep "$PLAY_PROCESS"` ]]; then
+if [[ -n `ps aux | grep "$PLAY_PROCESS"` ]]; then
         echo "Error: could not stop play application, error executing 'ps aux | grep "$PLAY_PROCESS" | awk '{print $2}' | xargs kill -SIGKILL" >> $LOG_FILE
         popd
         exit 1
