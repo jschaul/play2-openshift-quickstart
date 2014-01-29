@@ -47,24 +47,25 @@ if [[ -f "RUNNING_PID" ]]; then
         fi
 fi
 
+USERID=`id -u`
 #it survived, try to kill anything with play in it
 PLAY_PROCESS="[j]ava .*com.typesafe.play.*"
 #kill the app
-if [[ -n `ps aux | grep "$PLAY_PROCESS"` ]]; then
+if [[ -n `ps u U $USERID | grep "$PLAY_PROCESS"` ]]; then
 	echo "killing process ..." >> $LOG_FILE
-	ps aux | grep "$PLAY_PROCESS" | awk '{print $2}' >> $LOG_FILE
-	ps aux | grep "$PLAY_PROCESS" | awk '{print $2}' | xargs kill -SIGTERM
-	
+	ps u U $USERID | grep "$PLAY_PROCESS" | awk '{print $2}' >> $LOG_FILE
+	ps u U $USERID | grep "$PLAY_PROCESS" | awk '{print $2}' | xargs kill -SIGTERM
+
 fi
 
-if [[ -n `ps aux | grep "$PLAY_PROCESS"` ]]; then
+if [[ -n `ps u U $USERID | grep "$PLAY_PROCESS"` ]]; then
 	  sleep 0.3
-      ps aux | grep "$PLAY_PROCESS" | awk '{print $2}' | xargs kill -SIGKILL
+      ps u U $USERID | grep "$PLAY_PROCESS" | awk '{print $2}' | xargs kill -SIGKILL
 fi
 
 #couldn't kill it
-if [[ -n `ps aux | grep "$PLAY_PROCESS"` ]]; then
-        echo "Error: could not stop play application, error executing 'ps aux | grep "$PLAY_PROCESS" | awk '{print $2}' | xargs kill -SIGKILL" >> $LOG_FILE
+if [[ -n `ps u U $USERID | grep "$PLAY_PROCESS"` ]]; then
+        echo "Error: could not stop play application, error executing 'ps u U $USERID | grep \"$PLAY_PROCESS\" | awk '{print $2}' | xargs kill -SIGKILL" >> $LOG_FILE
         popd
         exit 1
 fi
